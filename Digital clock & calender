@@ -1,0 +1,13 @@
+#!/bin/bash
+
+while true
+do
+  clear
+  echo "==============================="
+  echo "       Digital Clock"
+  echo "==============================="
+  date +"Time : %H:%M:%S"
+  date +"Date : %A, %d %B %Y"
+  echo "==============================="
+  sleep 1
+done
