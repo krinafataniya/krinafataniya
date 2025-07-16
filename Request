@@ -1,0 +1,77 @@
+<?php
+session_start();
+include("../common/db.php");
+
+// SIGNUP
+if (isset($_POST['signup'])) {
+    $username = $_POST['username'];
+    $email = $_POST['email'];
+    $password = $_POST['password'];
+    $address = $_POST['address'];
+
+    $user = $conn->prepare("INSERT INTO users (`username`, `email`, `password`, `address`) VALUES (?, ?, ?, ?)");
+    $user->bind_param("ssss", $username, $email, $password, $address);
+
+    if ($user->execute()) {
+        $_SESSION["user"] = [
+            "username" => $username,
+            "email" => $email,
+            "user_id" => $conn->insert_id
+        ];
+        header("Location: /discuss1/BeautyDiscuss/index.php");
+        exit();
+    } else {
+        echo "New user not registered";
+    }
+}
+
+// LOGIN
+else if (isset($_POST['login'])) {
+    $email = $_POST['email'];
+    $password = $_POST['password'];
+
+    $query = "SELECT * FROM users WHERE email=? AND password=?";
+    $stmt = $conn->prepare($query);
+    $stmt->bind_param("ss", $email, $password);
+    $stmt->execute();
+    $result = $stmt->get_result();
+
+    if ($result->num_rows === 1) {
+        $row = $result->fetch_assoc();
+        $_SESSION["user"] = [
+            "username" => $row['username'],
+            "email" => $row['email'],
+            "user_id" => $row['id']
+        ];
+        header("Location: /discuss1/BeautyDiscuss/index.php");
+        exit();
+    } else {
+        echo "Invalid login credentials";
+    }
+}
+
+// APPOINTMENT
+else if (isset($_POST['appointment'])) {
+    $first_name = $_POST['first name'];
+    $last_name = $_POST['last name'];
+    $date = $_POST['date'];
+    $phone = $_POST['phone'];
+    $message = $_POST['message'];
+
+    $user = $conn->prepare("INSERT INTO appointment (`first_name`, `last_name`, `date`, `phone`, `message`) VALUES (?, ?, ?, ?, ?)");
+    $user->bind_param("sssss", $first_name, $last_name, $date, $phone, $message);
+
+    if ($user->execute()) {
+        $_SESSION["user"] = [
+            "first name" => $first_name,
+            "last name" => $last_name,
+            "date" => $date,
+            "user_id" => $conn->insert_id
+        ];
+        header("Location: /discuss1/BeautyDiscuss/index.php");
+        exit();
+    } else {
+        echo "Appointment not registered";
+    }
+}
+?>
